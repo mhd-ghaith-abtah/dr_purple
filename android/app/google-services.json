@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "284898009831",
+    "project_id": "dr-purple",
+    "storage_bucket": "dr-purple.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284898009831:android:6ac19f1289978019873842",
+        "android_client_info": {
+          "package_name": "com.purple.dr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "284898009831-dk1jrgabq0en4vo2njo9cemd9ipivbu3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBq8PF9GxoWnP4g44sVB7oSOIJN9Upu_Bs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "284898009831-dk1jrgabq0en4vo2njo9cemd9ipivbu3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
