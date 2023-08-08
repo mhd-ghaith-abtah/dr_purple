@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
             textDecoration: TextDecoration.underline,
           ),
         ).onTap(() => context.push(
-            "${GoRouter.of(context).location}/${Routes.forgotPasswordRoute}")),
+            "/${Routes.loginRoute}/${Routes.forgotPasswordRoute}")),
       );
 
   Widget _passwordTextField() => DrPurplePasswordTextField(
