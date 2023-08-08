@@ -152,7 +152,7 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                               ],
                             ))
                         .onTap(() => context.push(
-                            "${GoRouter.of(context).location}/${Routes.appointmentDetailsRoute}")),
+                            "/${Routes.appointmentsRoute}/${Routes.appointmentDetailsRoute}")),
                   ],
                 ).paddingSymmetric(horizontal: AppPadding.p18.sp),
                 SizedBox(height: AppSize.s2.h),

@@ -123,7 +123,7 @@ class HomeTopComponent extends StatelessWidget {
                     ImageAssets.bookAppointmentImage,
                     AppStrings.appointment.tr(),
                     () => context.push(
-                      "${GoRouter.of(context).location}/${Routes.bookAppointmentRoute}",
+                      "${Routes.homeRoute}/${Routes.bookAppointmentRoute}",
                       extra: servicesBloc,
                     ),
                   ),

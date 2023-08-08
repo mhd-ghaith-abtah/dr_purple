@@ -143,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               if (state.loadedType == RegisterBlocStateType.server) {
                 LoadingOverlay.of(context).hide();
                 context.push(
-                    "${GoRouter.of(context).location}/${Routes.verifyAccountRoute}");
+                    "/${Routes.registerRoute}/${Routes.verifyAccountRoute}");
               }
             } else if (state is RegisterError) {
               if (state.errorType == RegisterBlocStateType.server) {
@@ -269,7 +269,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         formKey: _formKey,
         errorMessage: AppStrings.usernameError.tr(),
         nameTextEditingController: _usernameTextEditingController,
-        readOnly: true,
+        readOnly: false,
         fontSize: FontSize.s16,
       );
 

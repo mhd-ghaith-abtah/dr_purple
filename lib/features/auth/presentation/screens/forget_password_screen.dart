@@ -93,7 +93,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               DrPurpleAppButton(
                 title: AppStrings.confirm.tr(),
                 onPress: () => context.push(
-                    "${GoRouter.of(context).location}/${Routes.resetPasswordRoute}"),
+                    "/${Routes.loginRoute}/${Routes.forgotPasswordRoute}/${Routes.resetPasswordRoute}"),
               ),
             ],
           ).paddingSymmetric(horizontal: AppSize.s4.w),

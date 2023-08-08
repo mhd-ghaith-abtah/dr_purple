@@ -108,7 +108,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: CupertinoIcons.globe,
             title: AppStrings.language.tr(),
             onTap: () => context.push(
-                "${GoRouter.of(context).location}/${Routes.languageRoute}"),
+                "${Routes.settingsRoute}/${Routes.languageRoute}"),
           ),
           DrPurpleListItemDesign(
             icon: Icons.account_circle_outlined,
