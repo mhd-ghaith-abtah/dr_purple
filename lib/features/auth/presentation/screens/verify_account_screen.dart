@@ -12,6 +12,7 @@ import 'package:dr_purple/core/utils/utils.dart';
 import 'package:dr_purple/core/widgets/buttons/dr_purple_app_button.dart';
 import 'package:dr_purple/core/widgets/buttons/dr_purple_back_button.dart';
 import 'package:dr_purple/core/widgets/dr_purple_scaffold.dart';
+import 'package:dr_purple/core/widgets/dr_purple_timer.dart';
 import 'package:dr_purple/core/widgets/loading_overlay.dart';
 import 'package:dr_purple/core/widgets/text_fields/dr_purple_verification_code_text_field.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/verify_account_bloc/verify_account_bloc.dart';
@@ -144,31 +145,9 @@ class _VerifyAccountScreenState extends State<VerifyAccountScreen> {
         ],
       );
 
-  Widget _resendCode() => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Text(
-                AppStrings.noCodeQuestion.tr(),
-                style: getRegularTextStyle(
-                  color: ColorManager.textPrimaryColor,
-                  fontSize: FontSize.s16,
-                ),
-              ),
-              SizedBox(width: AppSize.s2.w),
-              Text(
-                AppStrings.resend.tr(),
-                style: getBoldTextStyle(
-                  fontSize: FontSize.s16,
-                  color: ColorManager.primary,
-                  textDecoration: TextDecoration.underline,
-                ),
-              ).onTap(() {}),
-            ],
-          ),
-          const Text("01:58", textAlign: TextAlign.right)
-        ],
+  Widget _resendCode() => TimerCountdown(
+        onTapResend: () {},
+        isVerifyAccount: true,
       );
 
   List<Widget> _verifyAccountTitle() => [

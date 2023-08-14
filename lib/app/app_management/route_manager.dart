@@ -1,6 +1,7 @@
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
 import 'package:dr_purple/features/appointments/presentation/screens/appointment_details_screen.dart';
 import 'package:dr_purple/features/appointments/presentation/screens/appointments_screen.dart';
+import 'package:dr_purple/features/auth/presentation/bloc/forget_password_bloc/forget_password_bloc.dart';
 import 'package:dr_purple/features/auth/presentation/screens/forget_password_screen.dart';
 import 'package:dr_purple/features/auth/presentation/screens/login_screen.dart';
 import 'package:dr_purple/features/auth/presentation/screens/register_screen.dart';
@@ -11,6 +12,7 @@ import 'package:dr_purple/features/home/presentation/screens/book_appointment_sc
 import 'package:dr_purple/features/home/presentation/screens/dashboard_screen.dart';
 import 'package:dr_purple/features/home/presentation/screens/home_screen.dart';
 import 'package:dr_purple/features/notifications/presentation/screens/notifications_screen.dart';
+import 'package:dr_purple/features/settings/presentation/screens/change_password_screen.dart';
 import 'package:dr_purple/features/settings/presentation/screens/language_screen.dart';
 import 'package:dr_purple/features/settings/presentation/screens/settings_screen.dart';
 import 'package:dr_purple/features/splash/presentation/screens/get_started_screen.dart';
@@ -29,6 +31,7 @@ class Routes {
   static const String registerRoute = "register";
   static const String verifyAccountRoute = "verifyAccount";
   static const String languageRoute = "language";
+  static const String changePasswordRoute = "changePassword";
   static const String settingsRoute = "/settings";
   static const String notificationsRoute = "/notifications";
   static const String appointmentsRoute = "/appointments";
@@ -71,13 +74,14 @@ class RouteGenerator {
                   initForgetPasswordModule();
                   return const ForgetPasswordScreen();
                 },
-                routes: <GoRoute>[
-                  GoRoute(
-                    path: Routes.resetPasswordRoute,
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const ResetPasswordScreen(),
-                  ),
-                ],
+              ),
+              GoRoute(
+                path: Routes.resetPasswordRoute,
+                builder: (BuildContext context, GoRouterState state) =>
+                    BlocProvider.value(
+                  value: state.extra as ForgetPasswordBloc,
+                  child: const ResetPasswordScreen(),
+                ),
               ),
             ],
           ),
@@ -156,6 +160,13 @@ class RouteGenerator {
                 builder: (BuildContext context, GoRouterState state) {
                   initLanguageModule();
                   return const LanguageScreen();
+                },
+              ),
+              GoRoute(
+                path: Routes.changePasswordRoute,
+                builder: (BuildContext context, GoRouterState state) {
+                  initChangePasswordModule();
+                  return const ChangePasswordScreen();
                 },
               ),
             ],

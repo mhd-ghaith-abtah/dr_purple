@@ -137,5 +137,9 @@
   "patient": "المريض",
   "add_cal_error": "فشلت إضافة الموعد إلى التقويم",
   "add_cal_success": "تمت إضافة الموعد إلى التقويم بنجاح",
-  "select_calendar": "اختر تقويم"
+  "select_calendar": "اختر تقويم",
+  "change_password": "تغيير كلمة المرور",
+  "current_password": "كلمة المرور الحالية",
+  "repeat_new_password": "أعد كلمة المرور الجديدة",
+  "password_changed": "تم تغيير كلمة المرور بنجاح"
 }

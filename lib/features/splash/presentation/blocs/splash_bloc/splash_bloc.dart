@@ -18,9 +18,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     on<ManageAppInitState>((event, emit) async {
       await Future.delayed(AppDurations.megaSlow);
 
-      final token = await FirebaseMessagingService().getFCMToken();
-      print(token);
-
       /// check if first time opening the app
       final openFirstTime = _appPreferences.getOpenFirstTimeValue();
 

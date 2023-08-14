@@ -6,8 +6,10 @@ import 'package:dr_purple/app/app_management/theme/styles_manager.dart';
 import 'package:dr_purple/app/app_management/theme/theme_cubit/theme_cubit.dart';
 import 'package:dr_purple/app/app_management/values_manager.dart';
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
+import 'package:dr_purple/core/utils/utils.dart';
 import 'package:dr_purple/core/widgets/buttons/dr_purple_app_button.dart';
 import 'package:dr_purple/core/widgets/dr_purple_scaffold.dart';
+import 'package:dr_purple/core/widgets/loading_overlay.dart';
 import 'package:dr_purple/features/settings/presentation/blocs/manage_language_cubit/manage_language_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +52,17 @@ class _LanguageScreenState extends State<LanguageScreen> {
       );
 
   Widget _languageScreenContent() =>
-      BlocBuilder<ManageLanguageCubit, ManageLanguageState>(
+      BlocConsumer<ManageLanguageCubit, ManageLanguageState>(
+        listener: (context, state) async {
+          if (state is ErrorChangingAppLanguage) {
+            LoadingOverlay.of(context).hide();
+            await Utils.showToast(state.errorMessage);
+          } else if (state is ChangingAppLanguage) {
+            LoadingOverlay.of(context).show();
+          } else if (state is AppLanguageChanged) {
+            LoadingOverlay.of(context).hide();
+          }
+        },
         builder: (context, state) {
           return DrPurpleScaffold(
             backgroundColor: instance<ThemeCubit>().isThemeDark

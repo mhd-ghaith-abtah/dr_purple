@@ -1,7 +1,7 @@
 name: dr_purple
 description: A Flutter project for the customers of a medical center called Mr. Purple.
 publish_to: 'none'
-version: 0.0.7+1
+version: 1.0.0+1
 
 environment:
   sdk: '>=3.0.1 <4.0.0'

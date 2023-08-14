@@ -137,6 +137,12 @@ class AppStrings {
   static const logoutDesc = "logout_desc";
   static const profile = "profile";
   static const language = "language";
+  static const changePassword = "change_password";
+
+  /// change password screen
+  static const currentPassword = "current_password";
+  static const repeatNewPassword = "repeat_new_password";
+  static const passwordChanged = "password_changed";
 
   /// appointments screen
   static const appointmentDetails = "appointment_details";

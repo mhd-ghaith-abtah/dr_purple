@@ -19,27 +19,35 @@ import 'package:dr_purple/features/appointments/domain/use_cases/book_appointmen
 import 'package:dr_purple/features/appointments/domain/use_cases/get_all_appointments_use_case.dart';
 import 'package:dr_purple/features/appointments/domain/use_cases/get_appointment_use_case.dart';
 import 'package:dr_purple/features/appointments/presentation/blocs/appointments_bloc/appointments_bloc.dart';
+import 'package:dr_purple/features/auth/data/remote/data_sources/forget_password_remote_data_source.dart';
 import 'package:dr_purple/features/auth/data/remote/data_sources/login_remote_data_source.dart';
 import 'package:dr_purple/features/auth/data/remote/data_sources/logout_remote_data_source.dart';
 import 'package:dr_purple/features/auth/data/remote/data_sources/refresh_remote_data_source.dart';
 import 'package:dr_purple/features/auth/data/remote/data_sources/register_remote_data_source.dart';
 import 'package:dr_purple/features/auth/data/remote/data_sources/verify_account_remote_data_source.dart';
+import 'package:dr_purple/features/auth/data/remote/data_sources/verify_forget_password_remote_data_source.dart';
+import 'package:dr_purple/features/auth/data/repositories/forget_password_repository.dart';
 import 'package:dr_purple/features/auth/data/repositories/login_repository.dart';
 import 'package:dr_purple/features/auth/data/repositories/logout_repository.dart';
 import 'package:dr_purple/features/auth/data/repositories/refresh_repository.dart';
 import 'package:dr_purple/features/auth/data/repositories/register_repository.dart';
 import 'package:dr_purple/features/auth/data/repositories/verify_account_repository.dart';
+import 'package:dr_purple/features/auth/data/repositories/verify_forget_password_repository.dart';
+import 'package:dr_purple/features/auth/domain/use_cases/forget_password_use_case.dart';
 import 'package:dr_purple/features/auth/domain/use_cases/login_use_case.dart';
 import 'package:dr_purple/features/auth/domain/use_cases/logout_use_case.dart';
 import 'package:dr_purple/features/auth/domain/use_cases/refresh_use_case.dart';
 import 'package:dr_purple/features/auth/domain/use_cases/register_use_case.dart';
 import 'package:dr_purple/features/auth/domain/use_cases/verify_account_use_case.dart';
+import 'package:dr_purple/features/auth/domain/use_cases/verify_forget_password_use_case.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/country_code_cubit/country_code_cubit.dart';
+import 'package:dr_purple/features/auth/presentation/bloc/forget_password_bloc/forget_password_bloc.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/login_bloc/login_bloc.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/logout_cubit/logout_cubit.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/refresh/refresh_access_token.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/register_bloc/register_bloc.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/verify_account_bloc/verify_account_bloc.dart';
+import 'package:dr_purple/features/auth/presentation/bloc/verify_forget_password_bloc/verify_forget_password_bloc.dart';
 import 'package:dr_purple/features/home/data/remote/data_sources/get_all_service_time_remote_data_source.dart';
 import 'package:dr_purple/features/home/data/remote/data_sources/get_all_services_remote_data_source.dart';
 import 'package:dr_purple/features/home/data/remote/data_sources/get_doctor_remote_data_source.dart';
@@ -54,9 +62,19 @@ import 'package:dr_purple/features/home/domain/use_cases/get_doctor_use_case.dar
 import 'package:dr_purple/features/home/domain/use_cases/get_service_time_use_case.dart';
 import 'package:dr_purple/features/home/presentation/blocs/book_appointment_bloc/book_appointment_bloc.dart';
 import 'package:dr_purple/features/home/presentation/blocs/services_bloc/services_bloc.dart';
+import 'package:dr_purple/features/notifications/data/remote/data_sources/update_fcm_token_remote_data_source.dart';
+import 'package:dr_purple/features/notifications/data/repositories/update_fcm_token_repository.dart';
+import 'package:dr_purple/features/notifications/domain/use_cases/update_fcm_token_use_case.dart';
+import 'package:dr_purple/features/settings/data/data_sources/change_language_remote_data_source.dart';
+import 'package:dr_purple/features/settings/data/data_sources/change_password_remote_data_source.dart';
 import 'package:dr_purple/features/settings/data/data_sources/get_profile_remote_data_source.dart';
+import 'package:dr_purple/features/settings/data/repositories/change_language_repository.dart';
+import 'package:dr_purple/features/settings/data/repositories/change_password_repository.dart';
 import 'package:dr_purple/features/settings/data/repositories/get_profile_repository.dart';
+import 'package:dr_purple/features/settings/domain/use_cases/change_language_use_case.dart';
+import 'package:dr_purple/features/settings/domain/use_cases/change_password_use_case.dart';
 import 'package:dr_purple/features/settings/domain/use_cases/get_profile_use_case.dart';
+import 'package:dr_purple/features/settings/presentation/blocs/change_password_bloc/change_password_bloc.dart';
 import 'package:dr_purple/features/settings/presentation/blocs/manage_language_cubit/manage_language_cubit.dart';
 import 'package:dr_purple/features/settings/presentation/blocs/profile_bloc/profile_bloc.dart';
 import 'package:dr_purple/features/splash/presentation/blocs/splash_bloc/splash_bloc.dart';
@@ -196,6 +214,27 @@ Future<void> initAppModule() async {
         () => GetProfileUseCase(instance<GetProfileRepository>()));
   }
 
+  if (!GetIt.I.isRegistered<UpdateFCMTokenRemoteDataSource>()) {
+    ///register Update FCM Token remote data source as factory
+    instance.registerFactory<UpdateFCMTokenRemoteDataSource>(
+        () => UpdateFCMTokenRemoteDataSource(
+              instance<DioFactory>().getDio(),
+              instance<AppPreferences>(),
+              instance<RefreshAccessToken>(),
+            ));
+  }
+  if (!GetIt.I.isRegistered<UpdateFCMTokenRepository>()) {
+    ///register Update FCM Token repository as factory
+    instance.registerFactory<UpdateFCMTokenRepository>(() =>
+        UpdateFCMTokenRepository(instance<UpdateFCMTokenRemoteDataSource>(),
+            instance<NetworkInfo>()));
+  }
+  if (!GetIt.I.isRegistered<UpdateFCMTokenUseCase>()) {
+    ///register Update FCM Token use case as factory
+    instance.registerFactory<UpdateFCMTokenUseCase>(
+        () => UpdateFCMTokenUseCase(instance<UpdateFCMTokenRepository>()));
+  }
+
   ///register profile bloc as lazy singleton
   if (!GetIt.I.isRegistered<ProfileBloc>()) {
     instance.registerLazySingleton<ProfileBloc>(
@@ -280,7 +319,10 @@ void initVerifyAccountModule() {
   if (!GetIt.I.isRegistered<VerifyAccountBloc>()) {
     ///register Verify Account bloc as factory
     instance.registerFactory<VerifyAccountBloc>(() => VerifyAccountBloc(
-        instance<VerifyAccountUseCase>(), instance<AppPreferences>()));
+          instance<VerifyAccountUseCase>(),
+          instance<AppPreferences>(),
+          instance<UpdateFCMTokenUseCase>(),
+        ));
   }
   if (!GetIt.I.isRegistered<CountryCodeCubit>()) {
     ///register Country Code Cubit as factory
@@ -309,8 +351,15 @@ void initLoginModule() {
   }
   if (!GetIt.I.isRegistered<LoginBloc>()) {
     ///register Login bloc as factory
-    instance.registerFactory<LoginBloc>(
-        () => LoginBloc(instance<LoginUseCase>(), instance<AppPreferences>()));
+    instance.registerFactory<LoginBloc>(() => LoginBloc(
+          instance<LoginUseCase>(),
+          instance<AppPreferences>(),
+          instance<UpdateFCMTokenUseCase>(),
+        ));
+  }
+  if (!GetIt.I.isRegistered<CountryCodeCubit>()) {
+    ///register Country Code Cubit as factory
+    instance.registerFactory<CountryCodeCubit>(() => CountryCodeCubit());
   }
 }
 
@@ -507,6 +556,61 @@ void initAppointmentsModule() {
 }
 
 void initForgetPasswordModule() {
+  if (!GetIt.I.isRegistered<ForgetPasswordRemoteDataSource>()) {
+    ///register Forget Password Remote Data Source as factory
+    instance.registerFactory<ForgetPasswordRemoteDataSource>(
+        () => ForgetPasswordRemoteDataSource(
+              instance<DioFactory>().getDio(),
+              instance<AppPreferences>(),
+              instance<RefreshAccessToken>(),
+            ));
+  }
+  if (!GetIt.I.isRegistered<ForgetPasswordRepository>()) {
+    ///register Forget Password repository as factory
+    instance.registerFactory<ForgetPasswordRepository>(() =>
+        ForgetPasswordRepository(instance<ForgetPasswordRemoteDataSource>(),
+            instance<NetworkInfo>()));
+  }
+  if (!GetIt.I.isRegistered<ForgetPasswordUseCase>()) {
+    ///register Forget Password use case as factory
+    instance.registerFactory<ForgetPasswordUseCase>(
+        () => ForgetPasswordUseCase(instance<ForgetPasswordRepository>()));
+  }
+  if (!GetIt.I.isRegistered<VerifyForgetPasswordRemoteDataSource>()) {
+    ///register Verify Forget Password Remote Data Source as factory
+    instance.registerFactory<VerifyForgetPasswordRemoteDataSource>(
+        () => VerifyForgetPasswordRemoteDataSource(
+              instance<DioFactory>().getDio(),
+              instance<AppPreferences>(),
+              instance<RefreshAccessToken>(),
+            ));
+  }
+  if (!GetIt.I.isRegistered<VerifyForgetPasswordRepository>()) {
+    ///register Verify Forget Password repository as factory
+    instance.registerFactory<VerifyForgetPasswordRepository>(() =>
+        VerifyForgetPasswordRepository(
+            instance<VerifyForgetPasswordRemoteDataSource>(),
+            instance<NetworkInfo>()));
+  }
+  if (!GetIt.I.isRegistered<VerifyForgetPasswordUseCase>()) {
+    ///register Verify Forget Password use case as factory
+    instance.registerFactory<VerifyForgetPasswordUseCase>(() =>
+        VerifyForgetPasswordUseCase(
+            instance<VerifyForgetPasswordRepository>()));
+  }
+  if (!GetIt.I.isRegistered<ForgetPasswordBloc>()) {
+    ///register Forget Password Bloc as factory
+    instance.registerFactory<ForgetPasswordBloc>(() => ForgetPasswordBloc(
+          instance<ForgetPasswordUseCase>(),
+        ));
+  }
+  if (!GetIt.I.isRegistered<VerifyForgetPasswordBloc>()) {
+    ///register Verify Forget Password Bloc as factory
+    instance.registerFactory<VerifyForgetPasswordBloc>(
+        () => VerifyForgetPasswordBloc(
+              instance<VerifyForgetPasswordUseCase>(),
+            ));
+  }
   if (!GetIt.I.isRegistered<CountryCodeCubit>()) {
     ///register Country Code Cubit as factory
     instance.registerFactory<CountryCodeCubit>(() => CountryCodeCubit());
@@ -543,9 +647,57 @@ void initSettingsModule() {
 }
 
 void initLanguageModule() {
+  if (!GetIt.I.isRegistered<ChangeLanguageRemoteDataSource>()) {
+    ///register Change Language remote data source as factory
+    instance.registerFactory<ChangeLanguageRemoteDataSource>(
+        () => ChangeLanguageRemoteDataSource(
+              instance<DioFactory>().getDio(),
+              instance<AppPreferences>(),
+              instance<RefreshAccessToken>(),
+            ));
+  }
+  if (!GetIt.I.isRegistered<ChangeLanguageRepository>()) {
+    ///register Change Language repository as factory
+    instance.registerFactory<ChangeLanguageRepository>(() =>
+        ChangeLanguageRepository(instance<ChangeLanguageRemoteDataSource>(),
+            instance<NetworkInfo>()));
+  }
+  if (!GetIt.I.isRegistered<ChangeLanguageUseCase>()) {
+    ///register Change Language use case as factory
+    instance.registerFactory<ChangeLanguageUseCase>(
+        () => ChangeLanguageUseCase(instance<ChangeLanguageRepository>()));
+  }
   if (!GetIt.I.isRegistered<ManageLanguageCubit>()) {
     ///register manage language cubit as factory
-    instance.registerFactory<ManageLanguageCubit>(
-        () => ManageLanguageCubit(instance<LanguageManager>()));
+    instance.registerFactory<ManageLanguageCubit>(() => ManageLanguageCubit(
+        instance<LanguageManager>(), instance<ChangeLanguageUseCase>()));
+  }
+}
+
+void initChangePasswordModule() {
+  if (!GetIt.I.isRegistered<ChangePasswordRemoteDataSource>()) {
+    ///register Change Password remote data source as factory
+    instance.registerFactory<ChangePasswordRemoteDataSource>(
+        () => ChangePasswordRemoteDataSource(
+              instance<DioFactory>().getDio(),
+              instance<AppPreferences>(),
+              instance<RefreshAccessToken>(),
+            ));
+  }
+  if (!GetIt.I.isRegistered<ChangePasswordRepository>()) {
+    ///register Change Password repository as factory
+    instance.registerFactory<ChangePasswordRepository>(() =>
+        ChangePasswordRepository(instance<ChangePasswordRemoteDataSource>(),
+            instance<NetworkInfo>()));
+  }
+  if (!GetIt.I.isRegistered<ChangePasswordUseCase>()) {
+    ///register Change Password use case as factory
+    instance.registerFactory<ChangePasswordUseCase>(
+        () => ChangePasswordUseCase(instance<ChangePasswordRepository>()));
+  }
+  if (!GetIt.I.isRegistered<ChangePasswordBloc>()) {
+    ///register manage language cubit as factory
+    instance.registerFactory<ChangePasswordBloc>(
+        () => ChangePasswordBloc(instance<ChangePasswordUseCase>()));
   }
 }

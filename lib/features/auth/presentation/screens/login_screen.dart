@@ -8,10 +8,12 @@ import 'package:dr_purple/app/app_management/values_manager.dart';
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
 import 'package:dr_purple/core/utils/utils.dart';
 import 'package:dr_purple/core/widgets/buttons/dr_purple_app_button.dart';
+import 'package:dr_purple/core/widgets/country_code_picker/src/fl_country_code_picker.dart';
 import 'package:dr_purple/core/widgets/dr_purple_scaffold.dart';
 import 'package:dr_purple/core/widgets/loading_overlay.dart';
-import 'package:dr_purple/core/widgets/text_fields/dr_purple_name_text_field.dart';
 import 'package:dr_purple/core/widgets/text_fields/dr_purple_password_text_field.dart';
+import 'package:dr_purple/core/widgets/text_fields/dr_purple_phone_number_text_field.dart';
+import 'package:dr_purple/features/auth/presentation/bloc/country_code_cubit/country_code_cubit.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/login_bloc/login_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -28,20 +30,25 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late final CountryCodeCubit _countryCodeCubit;
+  late final FlCountryCodePicker _countryPicker;
   late final LoginBloc _loginBloc;
-  late final TextEditingController _usernameTextEditingController,
+  late final TextEditingController _phoneNumberTextEditingController,
       _passwordTextEditingController;
 
   final _formKey = GlobalKey<FormState>();
 
   _bind() {
     _loginBloc = instance<LoginBloc>();
+    _countryCodeCubit = instance<CountryCodeCubit>();
+    _countryPicker = const FlCountryCodePicker(
+        filteredCountries: ["SY"], showSearchBar: false);
 
-    _usernameTextEditingController = TextEditingController();
+    _phoneNumberTextEditingController = TextEditingController();
     _passwordTextEditingController = TextEditingController();
 
-    _usernameTextEditingController.addListener(() => _loginBloc
-      ..add(SetLoginUsername(_usernameTextEditingController.text))
+    _phoneNumberTextEditingController.addListener(() => _loginBloc
+      ..add(SetLoginUsername(_phoneNumberTextEditingController.text))
       ..add(LoginValidateInputEvent()));
 
     _passwordTextEditingController.addListener(() => _loginBloc
@@ -56,11 +63,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _disposeControllers() {
-    _usernameTextEditingController.dispose();
+    _phoneNumberTextEditingController.dispose();
     _passwordTextEditingController.dispose();
   }
 
   _disposeBloc() async {
+    await _countryCodeCubit.close();
     await _loginBloc.close();
   }
 
@@ -76,8 +84,11 @@ class _LoginScreenState extends State<LoginScreen> {
         body: _screenContent(context),
       );
 
-  Widget _screenContent(BuildContext context) => BlocProvider(
-        create: (context) => _loginBloc,
+  Widget _screenContent(BuildContext context) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => _loginBloc),
+          BlocProvider(create: (context) => _countryCodeCubit),
+        ],
         child: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) async {
             if (state is LoginLoading) {
@@ -133,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ..._loginTitle(),
-            _usernameTextField(),
+            _phoneNumberTextField(),
             SizedBox(height: AppSize.s2.h),
             _passwordTextField(),
             SizedBox(height: AppSize.s1.h),
@@ -188,8 +199,8 @@ class _LoginScreenState extends State<LoginScreen> {
             color: ColorManager.textSecondaryColor,
             textDecoration: TextDecoration.underline,
           ),
-        ).onTap(() => context.push(
-            "/${Routes.loginRoute}/${Routes.forgotPasswordRoute}")),
+        ).onTap(() => context
+            .push("/${Routes.loginRoute}/${Routes.forgotPasswordRoute}")),
       );
 
   Widget _passwordTextField() => DrPurplePasswordTextField(
@@ -197,12 +208,11 @@ class _LoginScreenState extends State<LoginScreen> {
         formKey: _formKey,
       );
 
-  Widget _usernameTextField() => DrPurpleNameTextField(
-        label: AppStrings.usernameTextFieldLabel.tr(),
+  Widget _phoneNumberTextField() => DrPurplePhoneNumberTextField(
+        phoneNumberTextEditingController: _phoneNumberTextEditingController,
         formKey: _formKey,
-        errorMessage: AppStrings.usernameError.tr(),
-        nameTextEditingController: _usernameTextEditingController,
-        fontSize: FontSize.s16,
+        countryCodeCubit: _countryCodeCubit,
+        countryPicker: _countryPicker,
       );
 
   List<Widget> _loginTitle() => [
