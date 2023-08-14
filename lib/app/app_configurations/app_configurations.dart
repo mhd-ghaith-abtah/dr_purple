@@ -5,6 +5,7 @@ class AppConfigurations {
   static const String playStorePackageName = "com.purple.dr";
   static const String appStoreBundleId = "com.purple.dr";
   static const String appStoreId = "";
+  static const String appVersion = "1.0.0";
 
   /// endpoints URLs
   static const String baseUrl = "https://www.drpurple.somee.com/api/";

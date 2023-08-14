@@ -6,12 +6,15 @@ import 'package:dr_purple/app/app_management/theme/styles_manager.dart';
 import 'package:dr_purple/app/app_management/theme/theme_cubit/theme_cubit.dart';
 import 'package:dr_purple/app/app_management/values_manager.dart';
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
+import 'package:dr_purple/core/utils/utils.dart';
 import 'package:dr_purple/core/widgets/buttons/dr_purple_app_button.dart';
 import 'package:dr_purple/core/widgets/buttons/dr_purple_back_button.dart';
 import 'package:dr_purple/core/widgets/country_code_picker/src/fl_country_code_picker.dart';
 import 'package:dr_purple/core/widgets/dr_purple_scaffold.dart';
+import 'package:dr_purple/core/widgets/loading_overlay.dart';
 import 'package:dr_purple/core/widgets/text_fields/dr_purple_phone_number_text_field.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/country_code_cubit/country_code_cubit.dart';
+import 'package:dr_purple/features/auth/presentation/bloc/forget_password_bloc/forget_password_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,16 +32,22 @@ class ForgetPasswordScreen extends StatefulWidget {
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   late final FlCountryCodePicker _countryPicker;
   late final CountryCodeCubit _countryCodeCubit;
+  late final ForgetPasswordBloc _forgetPasswordBloc;
   late final TextEditingController _phoneNumberTextEditingController;
 
   final _formKey = GlobalKey<FormState>();
 
   _bind() {
-    _phoneNumberTextEditingController = TextEditingController();
-
+    _forgetPasswordBloc = instance<ForgetPasswordBloc>();
     _countryCodeCubit = instance<CountryCodeCubit>();
     _countryPicker = const FlCountryCodePicker(
         filteredCountries: ["SY"], showSearchBar: false);
+
+    _phoneNumberTextEditingController = TextEditingController();
+    _phoneNumberTextEditingController.addListener(() => _forgetPasswordBloc
+      ..add(
+          SetForgetPasswordPhoneNumber(_phoneNumberTextEditingController.text))
+      ..add(ForgetPasswordValidateInputEvent()));
   }
 
   @override
@@ -51,7 +60,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     _phoneNumberTextEditingController.dispose();
   }
 
-  _disposeCubit() async => await _countryCodeCubit.close();
+  _disposeCubit() async {
+    await _countryCodeCubit.close();
+  }
 
   @override
   void dispose() {
@@ -68,13 +79,38 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         body: _screenContent(context),
       );
 
-  Widget _screenContent(BuildContext context) => BlocProvider(
-        create: (context) => _countryCodeCubit,
-        child: Stack(
-          children: [
-            _forgetPasswordDataView(context),
-            _backButton(),
-          ],
+  Widget _screenContent(BuildContext context) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => _countryCodeCubit),
+          BlocProvider.value(value: _forgetPasswordBloc),
+        ],
+        child: BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
+          listener: (context, state) async {
+            if (state is ForgetPasswordLoading) {
+              if (state.loadingType == ForgetPasswordBlocStateType.server) {
+                LoadingOverlay.of(context).show();
+              }
+            } else if (state is ForgetPasswordLoaded) {
+              if (state.loadedType == ForgetPasswordBlocStateType.server) {
+                LoadingOverlay.of(context).hide();
+                context.pushReplacement(
+                  "/${Routes.loginRoute}/${Routes.resetPasswordRoute}",
+                  extra: _forgetPasswordBloc,
+                );
+              }
+            } else if (state is ForgetPasswordError) {
+              if (state.errorType == ForgetPasswordBlocStateType.server) {
+                LoadingOverlay.of(context).hide();
+              }
+              await Utils.showToast(state.errorMessage);
+            }
+          },
+          child: Stack(
+            children: [
+              _forgetPasswordDataView(context),
+              _backButton(),
+            ],
+          ),
         ),
       );
 
@@ -90,10 +126,14 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               ..._forgetPasswordTitle(),
               _phoneNumberTextField(),
               SizedBox(height: AppSize.s4.h),
-              DrPurpleAppButton(
-                title: AppStrings.confirm.tr(),
-                onPress: () => context.push(
-                    "/${Routes.loginRoute}/${Routes.forgotPasswordRoute}/${Routes.resetPasswordRoute}"),
+              BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
+                builder: (context, state) => DrPurpleAppButton(
+                  onPress: _forgetPasswordBloc.inputsValid
+                      ? () => _forgetPasswordBloc.add(SendForgetPasswordEvent())
+                      : () async => await Utils.showToast(
+                          AppStrings.missingInfoError.tr()),
+                  title: AppStrings.confirm.tr(),
+                ),
               ),
             ],
           ).paddingSymmetric(horizontal: AppSize.s4.w),

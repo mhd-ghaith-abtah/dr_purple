@@ -137,5 +137,9 @@
   "patient": "Patient",
   "add_cal_error": "Appointment could not be added to calendar",
   "add_cal_success": "Appointment has been added to calendar successfully",
-  "select_calendar": "Select Calendar"
+  "select_calendar": "Select Calendar",
+  "change_password": "Change password",
+  "current_password": "Current password",
+  "repeat_new_password": "Repeat new password",
+  "password_changed": "Password changed successfully"
 }

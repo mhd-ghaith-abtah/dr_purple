@@ -107,13 +107,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
           DrPurpleListItemDesign(
             icon: CupertinoIcons.globe,
             title: AppStrings.language.tr(),
-            onTap: () => context.push(
-                "${Routes.settingsRoute}/${Routes.languageRoute}"),
+            onTap: () =>
+                context.push("${Routes.settingsRoute}/${Routes.languageRoute}"),
           ),
           DrPurpleListItemDesign(
             icon: Icons.account_circle_outlined,
             title: AppStrings.profile.tr(),
             onTap: () {},
+          ),
+          DrPurpleListItemDesign(
+            icon: Icons.password_outlined,
+            title: AppStrings.changePassword.tr(),
+            onTap: () => context
+                .push("${Routes.settingsRoute}/${Routes.changePasswordRoute}"),
           ),
           DrPurpleListItemDesign(
             icon: Icons.logout_outlined,

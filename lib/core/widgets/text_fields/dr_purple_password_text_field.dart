@@ -15,54 +15,57 @@ class DrPurplePasswordTextField extends StatelessWidget {
     required this.passwordTextEditingController,
     required this.formKey,
     this.label,
+    this.textInputAction,
   }) : super(key: key);
 
   final TextEditingController passwordTextEditingController;
+  final TextInputAction? textInputAction;
   final GlobalKey<FormState> formKey;
   final String? label;
 
   @override
   Widget build(BuildContext context) => AppTextField(
-        controller: passwordTextEditingController,
-        textFieldType: TextFieldType.PASSWORD,
-        isPassword: true,
-        suffixPasswordInvisibleWidget: Icon(
-          Icons.visibility_off,
+      controller: passwordTextEditingController,
+      textInputAction: textInputAction ?? TextInputAction.done,
+      textFieldType: TextFieldType.PASSWORD,
+      isPassword: true,
+      suffixPasswordInvisibleWidget: Icon(
+        Icons.visibility_off,
+        color: instance<ThemeCubit>().isThemeDark
+            ? ColorManager.primary
+            : Theme.of(context).iconTheme.color,
+      ),
+      suffixPasswordVisibleWidget: Icon(
+        Icons.visibility,
+        color: instance<ThemeCubit>().isThemeDark
+            ? Theme.of(context).iconTheme.color
+            : ColorManager.primary,
+      ),
+      decoration: InputDecoration(
+        labelText: label ?? AppStrings.passwordTextFieldLabel.tr(),
+        labelStyle: getRegularTextStyle(
+          fontSize: FontSize.s16,
+          color: ColorManager.textSecondaryColor,
+        ),
+        errorMaxLines: 2,
+        prefixIcon: Icon(
+          Icons.lock_outline,
           color: instance<ThemeCubit>().isThemeDark
-              ? ColorManager.primary
-              : Theme.of(context).iconTheme.color,
+              ? ColorManager.white
+              : ColorManager.black,
         ),
-        suffixPasswordVisibleWidget: Icon(
-          Icons.visibility,
-          color: instance<ThemeCubit>().isThemeDark
-              ? Theme.of(context).iconTheme.color
-              : ColorManager.primary,
-        ),
-        decoration: InputDecoration(
-          labelText: label ?? AppStrings.passwordTextFieldLabel.tr(),
-          labelStyle: getRegularTextStyle(
-            fontSize: FontSize.s16,
-            color: ColorManager.textSecondaryColor,
-          ),
-          errorMaxLines: 2,
-          prefixIcon: Icon(
-            Icons.lock_outline,
-            color: instance<ThemeCubit>().isThemeDark
-                ? ColorManager.white
-                : ColorManager.black,
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: ColorManager.lightGrey.withOpacity(0.2),
-            ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: ColorManager.lightGrey.withOpacity(0.2),
           ),
         ),
+      ),
       //  onTap: () => formKey.currentState?.validate(),
-       // onChanged: (_) => formKey.currentState?.validate(),
-        validator: (value) =>
-           // value == null || Utils.isPasswordValid(value) || value.isEmpty
-            //    ?
-            null
-              //  : AppStrings.passwordError.tr(),
+      // onChanged: (_) => formKey.currentState?.validate(),
+      validator: (value) =>
+          // value == null || Utils.isPasswordValid(value) || value.isEmpty
+          //    ?
+          null
+      //  : AppStrings.passwordError.tr(),
       );
 }

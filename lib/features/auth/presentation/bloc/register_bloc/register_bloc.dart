@@ -66,6 +66,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         _appPreferences
           ..setUserInfo(phoneNumber: "+963${_registerObject.contactNumber}")
           ..setLastRoute(lastRouteValue: Routes.verifyAccountRoute);
+
         emit(RegisterLoaded(loadedType: RegisterBlocStateType.server));
       }
     });
