@@ -1,3 +1,6 @@
+import 'package:dr_purple/app/app_management/strings_manager.dart';
+import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
+import 'package:dr_purple/core/services/notification_service/notification_service.dart';
 import 'package:dr_purple/core/utils/constants.dart';
 import 'package:dr_purple/features/appointments/data/remote/models/params/book_appointment/book_appointment_params.dart';
 import 'package:dr_purple/features/appointments/domain/use_cases/book_appointment_use_case.dart';
@@ -8,6 +11,7 @@ import 'package:dr_purple/features/home/domain/entities/get_doctor_entity.dart';
 import 'package:dr_purple/features/home/domain/use_cases/get_doctor_use_case.dart';
 
 import 'package:dr_purple/features/home/domain/use_cases/get_service_time_use_case.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -77,6 +81,16 @@ class BookAppointmentBloc
           errorMessage: errorMessage,
         ));
       } else {
+        final serviceTime = _serviceTimeResponseFiltered
+            .firstWhere((element) => element.id == _selectedServiceTimeId);
+        final dateTime =
+            DateTime.parse("${serviceTime.date} ${serviceTime.startTime}")
+                .subtract(const Duration(hours: 2));
+        instance<NotificationService>().scheduleNotification(
+          title: AppStrings.appointmentDay.tr(),
+          body: AppStrings.appointmentDayRemind.tr(args: [serviceTime.startTime!]),
+          scheduledNotificationDateTime: dateTime,
+        );
         emit(BookAppointmentLoaded(
           loadedType: BookAppointmentBlocStateType.book,
         ));

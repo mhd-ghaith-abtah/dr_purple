@@ -213,12 +213,12 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                       _bookAppointmentBloc.add(BookAppointment());
                     }
                   },
+                ).paddingOnly(
+                  right: AppPadding.p4.w,
+                  left: AppPadding.p4.w,
+                  bottom: AppPadding.p2.h,
                 ),
-              ).paddingOnly(
-                right: AppPadding.p4.w,
-                left: AppPadding.p4.w,
-                bottom: AppPadding.p2.h,
-              ),
+              )
             ],
           ),
         ),

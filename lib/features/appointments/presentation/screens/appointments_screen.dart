@@ -5,7 +5,6 @@ import 'package:dr_purple/app/app_management/theme/styles_manager.dart';
 import 'package:dr_purple/app/app_management/theme/theme_cubit/theme_cubit.dart';
 import 'package:dr_purple/app/app_management/values_manager.dart';
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
-import 'package:dr_purple/app/dummy_test_data/dummy_test_data.dart';
 import 'package:dr_purple/core/utils/utils.dart';
 import 'package:dr_purple/core/widgets/design/dr_purple_appointment_list_item_design.dart';
 import 'package:dr_purple/core/widgets/dr_purple_scaffold.dart';
@@ -27,7 +26,6 @@ class AppointmentsScreen extends StatefulWidget {
 
 class _AppointmentsScreenState extends State<AppointmentsScreen> {
   late final AppointmentsBloc _appointmentsBloc;
-  List<AppointmentData> data = appointmentDataList();
 
   _bind() => _appointmentsBloc = instance<AppointmentsBloc>()
     ..add(GetMyAppointments());
@@ -111,7 +109,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                         highlightColor: Colors.grey[100]!,
                         child: SizedBox(
                           width: AppSize.s90.w,
-                          height: 150.0,
+                          height: 260.0,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -124,7 +122,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                                       vertical: AppPadding.p8),
                                   padding: const EdgeInsets.all(AppPadding.p5),
                                   decoration: boxDecorationWithRoundedCorners(
-                                    borderRadius: radius(AppSize.s12),
+                                    borderRadius: radius(AppSize.s32),
                                     border: Border.all(
                                       color: ColorManager.primary,
                                     ),
@@ -144,28 +142,36 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                 ] else if (state is AppointmentsLoaded &&
                     state.loadedType ==
                         AppointmentsBlocStateType.getMyAppointments) ...[
-                  Column(
-                    children: data
-                        .map((e) => DrPurpleAppointmentListItemDesign(
-                            appointmentData: e))
-                        .toList(),
-                  ),
-                  // Container(
-                  //                   margin: const EdgeInsets.symmetric(vertical: AppPadding.p8),
-                  //                   padding: const EdgeInsets.all(AppPadding.p12),
-                  //                   decoration: boxDecorationWithRoundedCorners(
-                  //                     borderRadius: radius(AppSize.s12),
-                  //                     border: Border.all(color: ColorManager.primary),
-                  //                     backgroundColor: context.cardColor,
-                  //                   ),
-                  //                   child: Text(
-                  //                     "No appointments yet",
-                  //                     style: getBoldTextStyle(
-                  //                       color: ColorManager.textPrimaryColor,
-                  //                       fontSize: FontSize.s16,
-                  //                     ),
-                  //                   ),
-                  //                 ),
+                  if (_appointmentsBloc.appointments.isNotEmpty) ...[
+                    Column(
+                      children: _appointmentsBloc.appointments
+                          .map(
+                            (e) => DrPurpleAppointmentListItemDesign(
+                              appointmentData: e,
+                              appointmentsBloc: _appointmentsBloc,
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ] else ...[
+                    Container(
+                      margin:
+                          const EdgeInsets.symmetric(vertical: AppPadding.p8),
+                      padding: const EdgeInsets.all(AppPadding.p12),
+                      decoration: boxDecorationWithRoundedCorners(
+                        borderRadius: radius(AppSize.s12),
+                        border: Border.all(color: ColorManager.primary),
+                        backgroundColor: context.cardColor,
+                      ),
+                      child: Text(
+                        AppStrings.appointmentsEmpty.tr(),
+                        style: getBoldTextStyle(
+                          color: ColorManager.textPrimaryColor,
+                          fontSize: FontSize.s16,
+                        ),
+                      ),
+                    ),
+                  ],
                 ] else if (state is AppointmentsError &&
                     state.errorType ==
                         AppointmentsBlocStateType.getMyAppointments) ...[

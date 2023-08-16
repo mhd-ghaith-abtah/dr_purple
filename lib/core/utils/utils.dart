@@ -119,6 +119,17 @@ class Utils {
     return localTime;
   }
 
+  static String getDay(String date) {
+    DateTime newDate = DateTime.parse(date);
+    return newDate.day.toString();
+  }
+
+  static String getMonthName(String date) {
+    DateTime newDate = DateTime.parse(date);
+    return DateFormat.MMMM(instance<LanguageManager>().locale.toString())
+        .format(newDate);
+  }
+
   static String getDuration(String duration) {
     final time = duration.split(":").map((e) => int.parse(e)).toList();
     Duration newDuration =
@@ -178,6 +189,35 @@ class Utils {
     return "$date ${AppStrings.atHour.tr()} ${timeSplit[0]}:${timeSplit[1]}";
   }
 
+  static String getAppointmentBookTime(String date, {bool addTime = true}) {
+    DateTime newDate = DateTime.parse(date)
+        .add(addTime ? const Duration(hours: 3) : const Duration());
+    final formattedHour = DateFormat.Hm().format(newDate);
+    final formattedDate =
+        DateFormat.MMMM(instance<LanguageManager>().locale.toString())
+            .format(newDate);
+    final formattedDay = DateFormat.d().format(newDate);
+    return "$formattedDay $formattedDate ${AppStrings.atHour.tr()} $formattedHour";
+  }
+
+  static String getAppointmentTimeWithoutDate(String time) {
+    final timeSplit = time.split(":");
+    return "${timeSplit[0]}:${timeSplit[1]}";
+  }
+
+  static String getAppointmentState(String state) {
+    switch (state) {
+      case Constants.bookedServiceTimeState:
+        return AppStrings.inProgress.tr();
+      case Constants.canceledServiceTimeState:
+        return AppStrings.canceled.tr();
+      case Constants.doneServiceTimeState:
+        return AppStrings.done.tr();
+      default:
+        return AppStrings.unknown.tr();
+    }
+  }
+
   static String getImageByServiceName(String serviceName) {
     switch (serviceName) {
       case "oxyGeneo":
@@ -196,6 +236,17 @@ class Utils {
         return ImageAssets.photoEpilation;
       default:
         return ImageAssets.lifting;
+    }
+  }
+
+  static String getImageByMaterialName(String materialName) {
+    switch (materialName) {
+      case "Vegan BB Cream":
+        return ImageAssets.veganBBCream;
+      case "Brightening Day Cream":
+        return ImageAssets.brighteningDayCream;
+      default:
+        return ImageAssets.gydratingGlacialMoisturizingCream;
     }
   }
 

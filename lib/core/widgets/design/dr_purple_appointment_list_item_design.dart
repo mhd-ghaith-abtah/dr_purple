@@ -6,7 +6,11 @@ import 'package:dr_purple/app/app_management/theme/styles_manager.dart';
 import 'package:dr_purple/app/app_management/theme/theme_cubit/theme_cubit.dart';
 import 'package:dr_purple/app/app_management/values_manager.dart';
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
-import 'package:dr_purple/app/dummy_test_data/dummy_test_data.dart';
+import 'package:dr_purple/core/utils/constants.dart';
+import 'package:dr_purple/core/utils/utils.dart';
+import 'package:dr_purple/features/appointments/data/remote/models/responses/get_all_appointments_api_response/get_all_appointments_api_response.dart';
+import 'package:dr_purple/features/appointments/presentation/blocs/appointments_bloc/appointments_bloc.dart';
+import 'package:dr_purple/features/settings/presentation/blocs/profile_bloc/profile_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,10 +19,11 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class DrPurpleAppointmentListItemDesign extends StatelessWidget {
   const DrPurpleAppointmentListItemDesign(
-      {Key? key, required this.appointmentData})
+      {Key? key, required this.appointmentData, required this.appointmentsBloc})
       : super(key: key);
 
-  final AppointmentData appointmentData;
+  final AppointmentModel appointmentData;
+  final AppointmentsBloc appointmentsBloc;
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -48,14 +53,15 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            appointmentData.date,
+                            Utils.getDay(appointmentData.serviceTime.date),
                             style: getBoldTextStyle(
                               fontSize: FontSize.s20,
                               color: ColorManager.white,
                             ),
                           ),
                           Text(
-                            appointmentData.month,
+                            Utils.getMonthName(
+                                appointmentData.serviceTime.date),
                             style: getRegularTextStyle(
                               fontSize: FontSize.s14,
                               color: ColorManager.white,
@@ -72,7 +78,7 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              appointmentData.department,
+                              AppStrings.cosmetology.tr(),
                               style: getBoldTextStyle(
                                 fontSize: FontSize.s18,
                                 color: ColorManager.textPrimaryColor,
@@ -80,7 +86,7 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                             ),
                             SizedBox(height: AppSize.s1.h),
                             Text(
-                              appointmentData.doctor,
+                              "Dr. ${appointmentData.serviceTime.contractService.contract.doctor.firstName} ${appointmentData.serviceTime.contractService.contract.doctor.lastName}",
                               style: getRegularTextStyle(
                                 color: ColorManager.textSecondaryColor,
                                 fontSize: FontSize.s14,
@@ -88,7 +94,7 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                             ),
                             SizedBox(height: AppSize.s1.h),
                             Text(
-                              'Patient: ${appointmentData.patient}',
+                              "${instance<ProfileBloc>().getProfileEntity?.firstName} ${instance<ProfileBloc>().getProfileEntity?.lastName}",
                               style: getRegularTextStyle(
                                 color: ColorManager.textSecondaryColor,
                                 fontSize: FontSize.s14,
@@ -96,24 +102,16 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Container(
-                          alignment: Alignment.topCenter,
-                          padding: EdgeInsets.all(AppPadding.p10.sp),
-                          decoration: boxDecorationWithRoundedCorners(
-                            backgroundColor: Colors.transparent,
-                            borderRadius: radius(AppSize.s30),
-                            border: Border.all(
-                              color: Colors.grey.withOpacity(0.1),
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.notifications_none,
-                            color: appointmentData.department == 'General Care'
-                                ? ColorManager.primary
-                                : Colors.grey.shade400,
-                            size: AppSize.s24,
-                          ),
-                        ).paddingBottom(AppPadding.p18.sp)
+                        Image.asset(
+                          Utils.getImageByServiceName(appointmentData
+                              .serviceTime.contractService.service.name!),
+                          height: 80,
+                          width: 100,
+                          fit: BoxFit.fill,
+                          colorBlendMode: BlendMode.hue,
+                        )
+                            .cornerRadiusWithClipRRect(AppSize.s12)
+                            .paddingAll(AppPadding.p5.sp)
                       ],
                     ).expand(),
                   ],
@@ -121,10 +119,35 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                 SizedBox(height: AppSize.s1.h),
                 const Divider(thickness: AppSize.s0_5),
                 SizedBox(height: AppSize.s1.h),
+                Text(
+                  AppStrings.bookedOn.tr(args: [
+                    Utils.getAppointmentBookTime(appointmentData.dateCreated)
+                  ]),
+                  style: getRegularTextStyle(
+                    color: ColorManager.textPrimaryColor,
+                    fontSize: FontSize.s14,
+                  ),
+                ),
+                SizedBox(height: AppSize.s1.h),
+                Text(
+                  Utils.getAppointmentState(appointmentData.serviceTime.state),
+                  style: getRegularTextStyle(
+                    color: appointmentData.serviceTime.state ==
+                            Constants.bookedServiceTimeState
+                        ? ColorManager.primary
+                        : appointmentData.serviceTime.state ==
+                                Constants.doneServiceTimeState
+                            ? Colors.green
+                            : ColorManager.red,
+                    fontSize: FontSize.s14,
+                  ),
+                ),
+                SizedBox(height: AppSize.s1.h),
                 Row(
                   children: [
                     Text(
-                      "9:30 AM",
+                      Utils.getAppointmentTimeWithoutDate(
+                          appointmentData.serviceTime.startTime),
                       style: getBoldTextStyle(
                         fontSize: FontSize.s16,
                         color: ColorManager.primary,
@@ -132,27 +155,33 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                     ),
                     const Spacer(),
                     Padding(
-                            padding: const EdgeInsets.all(AppPadding.p10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  AppStrings.appointmentDetails.tr(),
-                                  style: getRegularTextStyle(
-                                    color: ColorManager.primary,
-                                    fontSize: FontSize.s14,
-                                  ),
-                                ),
-                                SizedBox(width: AppSize.s1.w),
-                                Icon(
-                                  Icons.arrow_forward,
-                                  color: ColorManager.primary,
-                                  size: AppSize.s16,
-                                ),
-                              ],
-                            ))
-                        .onTap(() => context.push(
-                            "/${Routes.appointmentsRoute}/${Routes.appointmentDetailsRoute}")),
+                        padding: const EdgeInsets.all(AppPadding.p10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              AppStrings.appointmentDetails.tr(),
+                              style: getRegularTextStyle(
+                                color: ColorManager.primary,
+                                fontSize: FontSize.s14,
+                              ),
+                            ),
+                            SizedBox(width: AppSize.s1.w),
+                            Icon(
+                              Icons.arrow_forward,
+                              color: ColorManager.primary,
+                              size: AppSize.s16,
+                            ),
+                          ],
+                        )).onTap(
+                      () => context.push(
+                        "${Routes.appointmentsRoute}/${Routes.appointmentDetailsRoute}",
+                        extra: {
+                          "appointmentData": appointmentData,
+                          "bloc": appointmentsBloc,
+                        },
+                      ),
+                    ),
                   ],
                 ).paddingSymmetric(horizontal: AppPadding.p18.sp),
                 SizedBox(height: AppSize.s2.h),
@@ -168,7 +197,7 @@ class DrPurpleAppointmentListItemDesign extends StatelessWidget {
                 borderRadius: radius(AppSize.s20),
               ),
               child: Text(
-                appointmentData.service,
+                appointmentData.serviceTime.contractService.service.name!,
                 style: getMediumTextStyle(
                   color: ColorManager.white,
                   fontSize: FontSize.s14,

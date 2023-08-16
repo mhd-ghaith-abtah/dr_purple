@@ -146,6 +146,19 @@ class AppStrings {
 
   /// appointments screen
   static const appointmentDetails = "appointment_details";
+  static const bookedOn = "booked_on";
+  static const cosmetology = "cosmetology";
+  static const inProgress = "in_progress";
+  static const canceled = "canceled";
+  static const done = "done";
+  static const unknown = "unknown";
+
+  /// Appointment details screen
+  static const cancelAppointment = "cancel_appointment";
+  static const cancelAppointmentDialogDesc = "cancel_appointment_dialog_desc";
+  static const appointmentState = "appointment_state";
+  static const cancelAppointmentSuccess = "cancel_appointment_success";
+  static const appointmentsEmpty = "appointments_empty";
 
   /// home screen
   static const welcome = "welcome";
@@ -156,6 +169,7 @@ class AppStrings {
   static const viewAll = "view_all";
   static const topOffers = "top_offers";
   static const price = "price";
+  static const ourServices = "our_services";
 
   /// book appointment
   static const bookStep = "book_step";
@@ -182,4 +196,6 @@ class AppStrings {
   static const addCalError = "add_cal_error";
   static const addCalSuccess = "add_cal_success";
   static const selectCalendar = "select_calendar";
+  static const appointmentDay = "appointment_day";
+  static const appointmentDayRemind = "appointment_day_remind";
 }

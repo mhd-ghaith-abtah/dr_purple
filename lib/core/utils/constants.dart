@@ -17,6 +17,9 @@ class Constants {
   static const logFileName = "dr_purple_log_file";
   static const logDirectory = "dr_purple_logs";
   static const logExportedDirectory = "dr_purple_logs/Exported";
+  static const bookedServiceTimeState = "BookedServiceTimeState";
+  static const canceledServiceTimeState = "CanceledServiceTimeState";
+  static const doneServiceTimeState = "DoneServiceTimeState";
 
   // static RegExp passwordRegex =
   //     RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d).{8,}$');

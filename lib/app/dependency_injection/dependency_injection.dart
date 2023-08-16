@@ -6,16 +6,21 @@ import 'package:dr_purple/app/app_management/media/domain/use_cases/background_u
 import 'package:dr_purple/app/app_management/media/presentation/blocs/media_upload_bloc/media_upload_bloc.dart';
 import 'package:dr_purple/app/app_management/theme/theme_cubit/theme_cubit.dart';
 import 'package:dr_purple/app/storage/app_preferences.dart';
+import 'package:dr_purple/app/storage/database/dr_purple_database.dart';
+import 'package:dr_purple/app/storage/database/notifications_database_helper.dart';
 import 'package:dr_purple/core/network/dio_factory.dart';
 import 'package:dr_purple/core/network/network_info.dart';
 import 'package:dr_purple/core/services/notification_service/notification_service.dart';
 import 'package:dr_purple/features/appointments/data/remote/data_sources/book_appointment_remote_data_source.dart';
+import 'package:dr_purple/features/appointments/data/remote/data_sources/cancel_appointment_remote_data_source.dart';
 import 'package:dr_purple/features/appointments/data/remote/data_sources/get_all_appointments_remote_data_source.dart';
 import 'package:dr_purple/features/appointments/data/remote/data_sources/get_appointment_remote_data_source.dart';
 import 'package:dr_purple/features/appointments/data/repositories/book_appointment_repository.dart';
+import 'package:dr_purple/features/appointments/data/repositories/cancel_appointment_repository.dart';
 import 'package:dr_purple/features/appointments/data/repositories/get_all_appointments_repository.dart';
 import 'package:dr_purple/features/appointments/data/repositories/get_appointment_repository.dart';
 import 'package:dr_purple/features/appointments/domain/use_cases/book_appointment_use_case.dart';
+import 'package:dr_purple/features/appointments/domain/use_cases/cancel_appointment_use_case.dart';
 import 'package:dr_purple/features/appointments/domain/use_cases/get_all_appointments_use_case.dart';
 import 'package:dr_purple/features/appointments/domain/use_cases/get_appointment_use_case.dart';
 import 'package:dr_purple/features/appointments/presentation/blocs/appointments_bloc/appointments_bloc.dart';
@@ -62,9 +67,16 @@ import 'package:dr_purple/features/home/domain/use_cases/get_doctor_use_case.dar
 import 'package:dr_purple/features/home/domain/use_cases/get_service_time_use_case.dart';
 import 'package:dr_purple/features/home/presentation/blocs/book_appointment_bloc/book_appointment_bloc.dart';
 import 'package:dr_purple/features/home/presentation/blocs/services_bloc/services_bloc.dart';
+import 'package:dr_purple/features/notifications/data/local/data_sources/notifications_local_data_source.dart';
 import 'package:dr_purple/features/notifications/data/remote/data_sources/update_fcm_token_remote_data_source.dart';
+import 'package:dr_purple/features/notifications/data/repositories/notifications_repository.dart';
 import 'package:dr_purple/features/notifications/data/repositories/update_fcm_token_repository.dart';
 import 'package:dr_purple/features/notifications/domain/use_cases/update_fcm_token_use_case.dart';
+import 'package:dr_purple/features/notifications/presentation/blocs/notifications_bloc/notifications_bloc.dart';
+import 'package:dr_purple/features/pharmacy/data/remote/data_sources/pharmacy_remote_data_source.dart';
+import 'package:dr_purple/features/pharmacy/data/repositories/pharmacy_repository.dart';
+import 'package:dr_purple/features/pharmacy/domain/use_cases/pharmacy_use_case.dart';
+import 'package:dr_purple/features/pharmacy/presentation/bloc/pharmacy_bloc/pharmacy_bloc.dart';
 import 'package:dr_purple/features/settings/data/data_sources/change_language_remote_data_source.dart';
 import 'package:dr_purple/features/settings/data/data_sources/change_password_remote_data_source.dart';
 import 'package:dr_purple/features/settings/data/data_sources/get_profile_remote_data_source.dart';
@@ -240,6 +252,24 @@ Future<void> initAppModule() async {
     instance.registerLazySingleton<ProfileBloc>(
         () => ProfileBloc(instance<GetProfileUseCase>()));
   }
+
+  ///register notifications database helper as factory
+  if (!GetIt.I.isRegistered<NotificationsDatabaseHelper>()) {
+    instance.registerFactory<NotificationsDatabaseHelper>(
+        () => NotificationsDatabaseHelper(DrPurpleDatabase()));
+  }
+
+  ///register notifications local data source as factory
+  if (!GetIt.I.isRegistered<NotificationsLocalDataSource>()) {
+    instance.registerFactory<NotificationsLocalDataSource>(() =>
+        NotificationsLocalDataSource(instance<NotificationsDatabaseHelper>()));
+  }
+
+  ///register notifications repository as factory
+  if (!GetIt.I.isRegistered<NotificationsRepository>()) {
+    instance.registerFactory<NotificationsRepository>(() =>
+        NotificationsRepository(instance<NotificationsLocalDataSource>()));
+  }
 }
 
 void neededInBackgroundUploaderModule() {
@@ -253,6 +283,26 @@ void neededInBackgroundUploaderModule() {
   if (!GetIt.I.isRegistered<MediaUploadBloc>()) {
     instance.registerLazySingleton<MediaUploadBloc>(
         () => MediaUploadBloc(instance<BackgroundUploaderUseCase>()));
+  }
+}
+
+void neededInBackgroundNotificationsModule() {
+  ///register notifications database helper as factory
+  if (!GetIt.I.isRegistered<NotificationsDatabaseHelper>()) {
+    instance.registerFactory<NotificationsDatabaseHelper>(
+        () => NotificationsDatabaseHelper(DrPurpleDatabase()));
+  }
+
+  ///register notifications local data source as factory
+  if (!GetIt.I.isRegistered<NotificationsLocalDataSource>()) {
+    instance.registerFactory<NotificationsLocalDataSource>(() =>
+        NotificationsLocalDataSource(instance<NotificationsDatabaseHelper>()));
+  }
+
+  ///register notifications repository as factory
+  if (!GetIt.I.isRegistered<NotificationsRepository>()) {
+    instance.registerFactory<NotificationsRepository>(() =>
+        NotificationsRepository(instance<NotificationsLocalDataSource>()));
   }
 }
 
@@ -461,6 +511,33 @@ void initBookAppointmentModule() {
   }
 }
 
+void initPharmacyModule() {
+  if (!GetIt.I.isRegistered<PharmacyRemoteDataSource>()) {
+    ///register Pharmacy remote data source as factory
+    instance.registerFactory<PharmacyRemoteDataSource>(
+        () => PharmacyRemoteDataSource(
+              instance<DioFactory>().getDio(),
+              instance<AppPreferences>(),
+              instance<RefreshAccessToken>(),
+            ));
+  }
+  if (!GetIt.I.isRegistered<PharmacyRepository>()) {
+    ///register Pharmacy repository as factory
+    instance.registerFactory<PharmacyRepository>(() => PharmacyRepository(
+        instance<PharmacyRemoteDataSource>(), instance<NetworkInfo>()));
+  }
+  if (!GetIt.I.isRegistered<PharmacyUseCase>()) {
+    ///register Pharmacy use case as factory
+    instance.registerFactory<PharmacyUseCase>(
+        () => PharmacyUseCase(instance<PharmacyRepository>()));
+  }
+  if (!GetIt.I.isRegistered<PharmacyBloc>()) {
+    ///register Pharmacy Bloc as factory
+    instance.registerFactory<PharmacyBloc>(
+        () => PharmacyBloc(instance<PharmacyUseCase>()));
+  }
+}
+
 void initAppointmentsModule() {
   if (!GetIt.I.isRegistered<GetAllAppointmentsRemoteDataSource>()) {
     ///register Get All Appointments remote data source as factory
@@ -482,6 +559,27 @@ void initAppointmentsModule() {
     ///register Get All Appointments use case as factory
     instance.registerFactory<GetAllAppointmentsUseCase>(() =>
         GetAllAppointmentsUseCase(instance<GetAllAppointmentsRepository>()));
+  }
+  if (!GetIt.I.isRegistered<CancelAppointmentRemoteDataSource>()) {
+    ///register Cancel Appointment remote data source as factory
+    instance.registerFactory<CancelAppointmentRemoteDataSource>(
+        () => CancelAppointmentRemoteDataSource(
+              instance<DioFactory>().getDio(),
+              instance<AppPreferences>(),
+              instance<RefreshAccessToken>(),
+            ));
+  }
+  if (!GetIt.I.isRegistered<CancelAppointmentRepository>()) {
+    ///register Cancel Appointment repository as factory
+    instance.registerFactory<CancelAppointmentRepository>(() =>
+        CancelAppointmentRepository(
+            instance<CancelAppointmentRemoteDataSource>(),
+            instance<NetworkInfo>()));
+  }
+  if (!GetIt.I.isRegistered<CancelAppointmentUseCase>()) {
+    ///register Cancel Appointment use case as factory
+    instance.registerFactory<CancelAppointmentUseCase>(() =>
+        CancelAppointmentUseCase(instance<CancelAppointmentRepository>()));
   }
   if (!GetIt.I.isRegistered<GetAppointmentRemoteDataSource>()) {
     ///register Get Appointment remote data source as factory
@@ -548,9 +646,7 @@ void initAppointmentsModule() {
     ///register Appointments Bloc as factory
     instance.registerFactory<AppointmentsBloc>(() => AppointmentsBloc(
           instance<GetAllAppointmentsUseCase>(),
-          instance<GetAppointmentUseCase>(),
-          instance<GetServiceTimeUseCase>(),
-          instance<GetAllServiceTimeUseCase>(),
+          instance<CancelAppointmentUseCase>(),
         ));
   }
 }
@@ -614,6 +710,14 @@ void initForgetPasswordModule() {
   if (!GetIt.I.isRegistered<CountryCodeCubit>()) {
     ///register Country Code Cubit as factory
     instance.registerFactory<CountryCodeCubit>(() => CountryCodeCubit());
+  }
+}
+
+void initNotificationsModule() {
+  if (!GetIt.I.isRegistered<NotificationsBloc>()) {
+    ///register Notifications Bloc as factory
+    instance.registerFactory<NotificationsBloc>(
+        () => NotificationsBloc(instance<NotificationsRepository>()));
   }
 }
 

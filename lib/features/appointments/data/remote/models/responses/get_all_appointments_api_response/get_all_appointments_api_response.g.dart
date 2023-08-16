@@ -43,10 +43,57 @@ Map<String, dynamic> _$GetAllAppointmentsAPIResultToJson(
 
 AppointmentModel _$AppointmentModelFromJson(Map<String, dynamic> json) =>
     AppointmentModel(
-      serviceTimeId: json['serviceTimeId'] as int,
+      id: json['id'] as int,
+      serviceTime: ServiceTimeModel.fromJson(
+          json['serviceTime'] as Map<String, dynamic>),
+      dateCreated: json['dateCreated'] as String,
     );
 
 Map<String, dynamic> _$AppointmentModelToJson(AppointmentModel instance) =>
     <String, dynamic>{
-      'serviceTimeId': instance.serviceTimeId,
+      'id': instance.id,
+      'serviceTime': instance.serviceTime,
+      'dateCreated': instance.dateCreated,
+    };
+
+ServiceTimeModel _$ServiceTimeModelFromJson(Map<String, dynamic> json) =>
+    ServiceTimeModel(
+      date: json['date'] as String,
+      startTime: json['startTime'] as String,
+      contractService: ContractServiceModel.fromJson(
+          json['contractService'] as Map<String, dynamic>),
+      state: json['state'] as String,
+    );
+
+Map<String, dynamic> _$ServiceTimeModelToJson(ServiceTimeModel instance) =>
+    <String, dynamic>{
+      'date': instance.date,
+      'startTime': instance.startTime,
+      'contractService': instance.contractService,
+      'state': instance.state,
+    };
+
+ContractServiceModel _$ContractServiceModelFromJson(
+        Map<String, dynamic> json) =>
+    ContractServiceModel(
+      service: ServiceModel.fromJson(json['service'] as Map<String, dynamic>),
+      contract:
+          ContractModel.fromJson(json['contract'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ContractServiceModelToJson(
+        ContractServiceModel instance) =>
+    <String, dynamic>{
+      'contract': instance.contract,
+      'service': instance.service,
+    };
+
+ContractModel _$ContractModelFromJson(Map<String, dynamic> json) =>
+    ContractModel(
+      doctor: GetDoctorAPIResult.fromJson(json['user'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ContractModelToJson(ContractModel instance) =>
+    <String, dynamic>{
+      'user': instance.doctor,
     };

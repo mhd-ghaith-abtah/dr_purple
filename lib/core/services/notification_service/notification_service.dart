@@ -1,9 +1,11 @@
+import 'package:device_calendar/device_calendar.dart' as tz;
 import 'package:dr_purple/app/app_management/theme/color_manager.dart';
 import 'package:dr_purple/app/app_management/strings_manager.dart';
 import 'package:dr_purple/core/services/background_uploader/background_uploader.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart';
 
 class NotificationService {
   NotificationService();
@@ -15,16 +17,19 @@ class NotificationService {
   static const uploadingImageChannelID = "uploading_image";
   static const uploadedImageChannelID = "uploaded_image";
   static const firebaseChannelID = "firebase";
+  static const reminderChannelID = "reminder";
 
   /// Channels Group IDs
   static const uploadingImageChannelGroupID = "uploading_images_group";
   static const uploadedImageChannelGroupID = "uploaded_images_group";
   static const firebaseChannelGroupID = "firebase_group";
+  static const reminderChannelGroupID = "reminder_group";
 
   /// Channels Names
   static const uploadingImageChannelName = "Uploading Image";
   static const uploadedImageChannelName = "Uploaded Image";
   static const firebaseChannelName = "Firebase";
+  static const reminderChannelName = "Reminder";
 
   /// Channels Descriptions
   static const uploadingImageChannelDescription =
@@ -32,6 +37,8 @@ class NotificationService {
   static const uploadedImageChannelDescription =
       "this channel is for uploaded images";
   static const firebaseChannelDescription = "this channel is for firebase";
+  static const reminderChannelDescription =
+      "this channel is for appointment reminder";
 
   Future<void> initNotifications() async {
     AndroidInitializationSettings androidInitialize =
@@ -51,10 +58,49 @@ class NotificationService {
         await _notify.getNotificationAppLaunchDetails();
     await NotificationController.notificationOpenedAppFromTerminatedState(
         notificationAppLaunchDetails);
+    initializeTimeZones();
   }
 
   int createUniqueId() =>
       DateTime.now().millisecondsSinceEpoch.remainder(100000);
+
+  Future scheduleNotification({
+    int id = 0,
+    required String title,
+    required String body,
+    required DateTime scheduledNotificationDateTime,
+  }) async {
+    AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      reminderChannelID,
+      reminderChannelName,
+      colorized: true,
+      color: ColorManager.primary,
+      channelDescription: reminderChannelDescription,
+      groupKey: reminderChannelGroupID,
+      category: AndroidNotificationCategory.reminder,
+    );
+    DarwinNotificationDetails iOSNotificationDetails =
+        const DarwinNotificationDetails(
+      presentAlert: false,
+      presentBadge: false,
+      presentSound: false,
+      threadIdentifier: reminderChannelID,
+      categoryIdentifier: reminderChannelGroupID,
+      interruptionLevel: InterruptionLevel.active,
+    );
+    NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails, iOS: iOSNotificationDetails);
+    return _notify.zonedSchedule(
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(scheduledNotificationDateTime, tz.local),
+      notificationDetails,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
 
   Future<void> createAttachmentProgressNotification({
     required int taskId,

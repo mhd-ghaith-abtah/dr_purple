@@ -1,0 +1,79 @@
+{
+  "data": {
+    "results": [
+      {
+        "materials": [
+          {
+            "id": 1,
+            "subDepartmentId": 1,
+            "materialId": 1,
+            "quantity": 10,
+            "material": {
+              "salePrice": 25000,
+              "id": 1,
+              "name": "Vegan BB Cream",
+              "unit": "ml",
+              "costPrice": 20000,
+              "dateCreated": "2023-08-09T14:50:54.204196",
+              "dateModified": "2023-08-09T14:50:54.2041978",
+              "createdBy": "1",
+              "modifiedBy": "1"
+            }
+          },
+          {
+            "id": 2,
+            "subDepartmentId": 1,
+            "materialId": 2,
+            "quantity": 20,
+            "material": {
+              "salePrice": 21000,
+              "id": 2,
+              "name": "Brightening Day Cream",
+              "unit": "ml",
+              "costPrice": 17000,
+              "dateCreated": "2023-08-09T14:50:54.2041982",
+              "dateModified": "2023-08-09T14:50:54.2041988",
+              "createdBy": "1",
+              "modifiedBy": "1"
+            }
+          },
+          {
+            "id": 3,
+            "subDepartmentId": 1,
+            "materialId": 3,
+            "quantity": 30,
+            "material": {
+              "salePrice": 25000,
+              "id": 3,
+              "name": "Hydrating Glacial Moisturizing Cream",
+              "unit": "ml",
+              "costPrice": 20000,
+              "dateCreated": "2023-08-09T14:50:54.2041992",
+              "dateModified": "2023-08-09T14:50:54.2041996",
+              "createdBy": "1",
+              "modifiedBy": "1"
+            }
+          }
+        ],
+        "id": 1,
+        "name": "Pharmacy",
+        "departmentId": 1,
+        "dateCreated": "2023-08-09T14:50:54.2042083",
+        "dateModified": "2023-08-09T14:50:54.2042087",
+        "createdBy": "1",
+        "modifiedBy": "1"
+      }
+    ],
+    "currentPage": 1,
+    "pageCount": 1,
+    "pageSize": 10,
+    "rowCount": 1,
+    "firstRowOnPage": 1,
+    "lastRowOnPage": 1,
+    "hasPreviousPage": false,
+    "hasNextPage": false
+  },
+  "succsess": true,
+  "message": "SubDepartment List Retrieved",
+  "messageId": 200
+}

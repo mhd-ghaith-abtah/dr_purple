@@ -141,5 +141,19 @@
   "change_password": "Change password",
   "current_password": "Current password",
   "repeat_new_password": "Repeat new password",
-  "password_changed": "Password changed successfully"
+  "password_changed": "Password changed successfully",
+  "booked_on": "Booked on: {}",
+  "cosmetology": "Cosmetology",
+  "in_progress": "In progress",
+  "canceled": "Canceled",
+  "done": "Done",
+  "unknown": "Unknown",
+  "appointment_state": "Appointment state",
+  "cancel_appointment": "Cancel Appointment",
+  "cancel_appointment_dialog_desc": "Are you sure that you want to cancel this appointment?",
+  "cancel_appointment_success": "Appointment canceled successfully",
+  "appointments_empty": "You have no appointments yet",
+  "our_services": "Our services",
+  "appointment_day": "Appointment day",
+  "appointment_day_remind": "Do not forget your appointment today at {}"
 }

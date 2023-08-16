@@ -1,5 +1,7 @@
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
 import 'package:dr_purple/core/services/notification_service/notification_service.dart';
+import 'package:dr_purple/features/notifications/data/local/models/notification_database_model/notification_database_model.dart';
+import 'package:dr_purple/features/notifications/data/repositories/notifications_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
@@ -61,6 +63,12 @@ class FirebaseMessagingService {
           print("body: ${message.notification?.body}");
           print("data: ${message.data}");
         }
+        instance<NotificationsRepository>()
+            .addNotification(NotificationDatabaseModel(
+          title: message.notification?.title,
+          body: message.notification?.body,
+          date: message.sentTime.toString(),
+        ));
 
         /// show notification on foreground
         // Map<String, String> messageData =
@@ -137,6 +145,13 @@ Future<void> _firebaseBackground(RemoteMessage message) async {
     print("body: ${message.notification?.body}");
     print("data: ${message.data}");
   }
+
+  neededInBackgroundNotificationsModule();
+  instance<NotificationsRepository>().addNotification(NotificationDatabaseModel(
+    title: message.notification?.title,
+    body: message.notification?.body,
+    date: message.sentTime.toString(),
+  ));
 
   /// worker messages
   // if (message.data["type"] == Constants.parkRequestClaimFBMessageType) {

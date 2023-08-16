@@ -76,6 +76,7 @@ flutter:
     - assets/images/home/
     - assets/images/home/departments/
     - assets/images/services/
+    - assets/images/pharmacy/
 
   fonts:
     - family: Century-Gothic

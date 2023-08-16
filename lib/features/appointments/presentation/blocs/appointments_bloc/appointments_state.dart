@@ -24,4 +24,4 @@ class AppointmentsError extends AppointmentsState {
   AppointmentsError({required this.errorType, required this.errorMessage});
 }
 
-enum AppointmentsBlocStateType { getMyAppointments }
+enum AppointmentsBlocStateType { getMyAppointments, cancelAppointment }
