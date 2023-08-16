@@ -57,6 +57,14 @@ class ImageAssets {
   static const String photoEpilation =
       "${imageAssetsBaseRoute}services/photo_depilation.jpg";
 
+  /// pharmacy
+  static const String brighteningDayCream =
+      "${imageAssetsBaseRoute}pharmacy/brightening_day_cream.jpg";
+  static const String gydratingGlacialMoisturizingCream =
+      "${imageAssetsBaseRoute}pharmacy/gydrating_glacial_moisturizing_cream.jpg";
+  static const String veganBBCream =
+      "${imageAssetsBaseRoute}pharmacy/vegan_bb_cream.jpg";
+
   /// dummy
   static const String doctorImage = "${imageAssetsBaseRoute}dummy/doctor.png";
   static const String hospitalImage =

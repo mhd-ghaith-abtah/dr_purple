@@ -1,4 +1,6 @@
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
+import 'package:dr_purple/features/appointments/data/remote/models/responses/get_all_appointments_api_response/get_all_appointments_api_response.dart';
+import 'package:dr_purple/features/appointments/presentation/blocs/appointments_bloc/appointments_bloc.dart';
 import 'package:dr_purple/features/appointments/presentation/screens/appointment_details_screen.dart';
 import 'package:dr_purple/features/appointments/presentation/screens/appointments_screen.dart';
 import 'package:dr_purple/features/auth/presentation/bloc/forget_password_bloc/forget_password_bloc.dart';
@@ -12,6 +14,7 @@ import 'package:dr_purple/features/home/presentation/screens/book_appointment_sc
 import 'package:dr_purple/features/home/presentation/screens/dashboard_screen.dart';
 import 'package:dr_purple/features/home/presentation/screens/home_screen.dart';
 import 'package:dr_purple/features/notifications/presentation/screens/notifications_screen.dart';
+import 'package:dr_purple/features/pharmacy/presentation/screens/pharmacy_screen.dart';
 import 'package:dr_purple/features/settings/presentation/screens/change_password_screen.dart';
 import 'package:dr_purple/features/settings/presentation/screens/language_screen.dart';
 import 'package:dr_purple/features/settings/presentation/screens/settings_screen.dart';
@@ -38,6 +41,7 @@ class Routes {
   static const String appointmentDetailsRoute = "appointmentDetails";
   static const String homeRoute = "/home";
   static const String bookAppointmentRoute = "bookAppointment";
+  static const String pharmacyRoute = "pharmacy";
 }
 
 class RouteGenerator {
@@ -125,6 +129,13 @@ class RouteGenerator {
                   );
                 },
               ),
+              GoRoute(
+                path: Routes.pharmacyRoute,
+                builder: (BuildContext context, GoRouterState state) {
+                  initPharmacyModule();
+                  return const PharmacyScreen();
+                },
+              ),
             ],
           ),
           GoRoute(
@@ -137,15 +148,26 @@ class RouteGenerator {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.appointmentDetailsRoute,
-                builder: (BuildContext context, GoRouterState state) =>
-                    const AppointmentDetailsScreen(),
+                builder: (BuildContext context, GoRouterState state) {
+                  final extra = state.extra as Map<String, dynamic>;
+                  final bloc = extra['bloc'] as AppointmentsBloc;
+                  final appointmentData =
+                      extra['appointmentData'] as AppointmentModel;
+                  return BlocProvider.value(
+                    value: bloc,
+                    child: AppointmentDetailsScreen(
+                        appointmentData: appointmentData),
+                  );
+                },
               ),
             ],
           ),
           GoRoute(
             path: Routes.notificationsRoute,
-            builder: (BuildContext context, GoRouterState state) =>
-                const NotificationsScreen(),
+            builder: (BuildContext context, GoRouterState state) {
+              initNotificationsModule();
+              return const NotificationsScreen();
+            },
           ),
           GoRoute(
             parentNavigatorKey: _shellKey,

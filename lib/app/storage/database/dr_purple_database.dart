@@ -42,8 +42,15 @@ class DrPurpleDatabase {
     }
   }
 
-  FutureOr<void> _onCreate(Database db, int version) async {}
+  String kNotificationsTable = "notifications";
 
-  Future<int?> deleteMyDatabase() async =>
-      await createDb().then((value) => null);
+  FutureOr<void> _onCreate(Database db, int version) async {
+    await db.execute(
+      "create table $kNotificationsTable (id integer primary key autoincrement, title TEXT,"
+      "body TEXT, date TEXT, time TEXT)",
+    );
+  }
+
+  Future<int?> deleteMyDatabase() async => await createDb()
+      .then((db) async => await db?.delete(kNotificationsTable));
 }

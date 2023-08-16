@@ -1,20 +1,23 @@
+import 'package:dr_purple/app/app_configurations/assets.dart';
 import 'package:dr_purple/app/app_management/font_manager.dart';
 import 'package:dr_purple/app/app_management/theme/color_manager.dart';
 import 'package:dr_purple/app/app_management/theme/styles_manager.dart';
 import 'package:dr_purple/app/app_management/theme/theme_cubit/theme_cubit.dart';
 import 'package:dr_purple/app/app_management/values_manager.dart';
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
-import 'package:dr_purple/app/dummy_test_data/dummy_test_data.dart';
+import 'package:dr_purple/core/utils/utils.dart';
+import 'package:dr_purple/features/notifications/domain/entities/notification_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class DrPurpleNotificationListItemDesign extends StatelessWidget {
-  const DrPurpleNotificationListItemDesign(
-      {Key? key, required this.notificationData})
-      : super(key: key);
+  const DrPurpleNotificationListItemDesign({
+    Key? key,
+    required this.notificationData,
+  }) : super(key: key);
 
-  final NotificationData notificationData;
+  final NotificationEntity notificationData;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -38,7 +41,7 @@ class DrPurpleNotificationListItemDesign extends StatelessWidget {
                     : Colors.grey.shade50,
                 borderRadius: radius(AppSize.s10),
               ),
-              child: notificationData.image,
+              child: Image.asset(ImageAssets.doctorImage, fit: BoxFit.fill),
             ),
             SizedBox(width: AppSize.s2.w),
             Column(
@@ -46,7 +49,7 @@ class DrPurpleNotificationListItemDesign extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  notificationData.title,
+                  notificationData.title!,
                   style: getRegularTextStyle(
                     fontSize: FontSize.s14,
                     color: instance<ThemeCubit>().isThemeDark
@@ -58,7 +61,8 @@ class DrPurpleNotificationListItemDesign extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      notificationData.time,
+                      Utils.getAppointmentBookTime(notificationData.date!,
+                          addTime: false),
                       style: getBoldTextStyle(
                         fontSize: FontSize.s14,
                         color: ColorManager.primary,

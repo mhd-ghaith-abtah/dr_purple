@@ -7,7 +7,6 @@ import 'package:dr_purple/app/app_management/theme/styles_manager.dart';
 import 'package:dr_purple/app/app_management/values_manager.dart';
 import 'package:dr_purple/app/dependency_injection/dependency_injection.dart';
 import 'package:dr_purple/features/home/presentation/blocs/services_bloc/services_bloc.dart';
-import 'package:dr_purple/features/home/presentation/screens/widgets/booked_dialog.dart';
 import 'package:dr_purple/features/settings/presentation/blocs/profile_bloc/profile_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -131,7 +130,9 @@ class HomeTopComponent extends StatelessWidget {
                     context,
                     ImageAssets.pharmacyImage,
                     AppStrings.pharmacy.tr(),
-                    () {},
+                    () => context.push(
+                      "${Routes.homeRoute}/${Routes.pharmacyRoute}",
+                    ),
                   ),
                 ],
               ),
