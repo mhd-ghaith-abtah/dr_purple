@@ -33,7 +33,7 @@ class VerifyForgetPasswordBloc
       var res = await _verifyForgetPasswordUseCase.call(
         VerifyForgetPasswordParams(
             body: VerifyForgetPasswordParamsBody(
-          mobileNumber: "+963${event.phoneNumber}",
+          mobileNumber: event.phoneNumber,
           code: _code,
           newPassword: _newPassword,
         )),

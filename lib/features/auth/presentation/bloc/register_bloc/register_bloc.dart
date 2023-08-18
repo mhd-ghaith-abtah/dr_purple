@@ -43,7 +43,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         RegisterParams(
           body: RegisterParamsBody(
             email: _registerObject.email,
-            contactNumber: "+963${_registerObject.contactNumber}",
+            contactNumber: _registerObject.contactNumber,
             firstName: _registerObject.firstName,
             lastName: _registerObject.lastName,
             userName: _registerObject.userName,
@@ -64,7 +64,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             errorType: RegisterBlocStateType.server));
       } else {
         _appPreferences
-          ..setUserInfo(phoneNumber: "+963${_registerObject.contactNumber}")
+          ..setUserInfo(phoneNumber: _registerObject.contactNumber)
           ..setLastRoute(lastRouteValue: Routes.verifyAccountRoute);
 
         emit(RegisterLoaded(loadedType: RegisterBlocStateType.server));

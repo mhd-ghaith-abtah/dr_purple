@@ -26,7 +26,7 @@ class Constants {
   static RegExp passwordRegex = RegExp(r'^(?=.*?[aA-zZ])(?=.*?\d).{8,}$');
   static RegExp emailRegex =
       RegExp(r"^[a-zA-Z\d.a-zA-Z!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z\d]+\.[a-zA-Z]+");
-  static RegExp phoneNumberRegex = RegExp(r'(^(?:[+0]9639)?[0-9]{8}$)');
+  static RegExp phoneNumberRegex = RegExp(r'(^(?:[+0]96309)?[0-9]{8}$)');
 
   static const genders = [Gender.male, Gender.female];
 }

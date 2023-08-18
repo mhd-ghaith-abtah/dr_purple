@@ -231,42 +231,46 @@ class AppointmentDetailsList extends StatelessWidget {
                   fontSize: FontSize.s16,
                 ),
               ).paddingLeft(AppPadding.p5.w),
-              SizedBox(height: AppSize.s5.h),
-              nb.AppButton(
-                height: AppSize.s50,
-                width: context.width(),
-                color: ColorManager.red,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      AppStrings.cancelAppointment.tr(),
-                      style: nb.boldTextStyle(
-                        color: instance<ThemeCubit>().isThemeDark
-                            ? ColorManager.black
-                            : ColorManager.white,
+              if(appointmentData!.serviceTime.state !=
+                  Constants.doneServiceTimeState)...[
+                SizedBox(height: AppSize.s5.h),
+                nb.AppButton(
+                  height: AppSize.s50,
+                  width: context.width(),
+                  color: ColorManager.red,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppStrings.cancelAppointment.tr(),
+                        style: nb.boldTextStyle(
+                          color: instance<ThemeCubit>().isThemeDark
+                              ? ColorManager.black
+                              : ColorManager.white,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  onTap: () async =>
+                  await Utils.dialog(
+                    context: context,
+                    dialogType: DialogType.warning,
+                    okButtonTitle: AppStrings.confirm.tr(),
+                    dialogTitle: AppStrings.cancelAppointment.tr(),
+                    dialogDesc: AppStrings.cancelAppointmentDialogDesc.tr(),
+                    onPressCancel: () {},
+                    onPressOk: () =>
+                        appointmentsBloc!
+                            .add(
+                            CancelAppointmentEvent(id: appointmentData!.id)),
+                    swapColors: true,
+                  ).show(),
+                ).paddingOnly(
+                  right: AppPadding.p4.w,
+                  left: AppPadding.p4.w,
+                  bottom: AppPadding.p2.h,
                 ),
-                onTap: () async =>
-                await Utils.dialog(
-                  context: context,
-                  dialogType: DialogType.warning,
-                  okButtonTitle: AppStrings.confirm.tr(),
-                  dialogTitle: AppStrings.cancelAppointment.tr(),
-                  dialogDesc: AppStrings.cancelAppointmentDialogDesc.tr(),
-                  onPressCancel: () {},
-                  onPressOk: () =>
-                      appointmentsBloc!
-                          .add(CancelAppointmentEvent(id: appointmentData!.id)),
-                  swapColors: true,
-                ).show(),
-              ).paddingOnly(
-                right: AppPadding.p4.w,
-                left: AppPadding.p4.w,
-                bottom: AppPadding.p2.h,
-              ),
+              ],
               SizedBox(height: AppSize.s2.h),
             ],
           ).paddingAll(AppPadding.p18.sp),

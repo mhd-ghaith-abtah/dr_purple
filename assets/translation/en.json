@@ -155,5 +155,6 @@
   "appointments_empty": "You have no appointments yet",
   "our_services": "Our services",
   "appointment_day": "Appointment day",
-  "appointment_day_remind": "Do not forget your appointment today at {}"
+  "appointment_day_remind": "Do not forget your appointment today at {}",
+  "empty_notifications": "No notifications yet"
 }
