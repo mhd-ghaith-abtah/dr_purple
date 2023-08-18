@@ -79,15 +79,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       BlocBuilder<NotificationsBloc, NotificationsState>(
         builder: (context, state) {
           if (state is NotificationsLoaded) {
-            return SingleChildScrollView(
-              child: Column(
-                children: _notificationsBloc.notifications
-                    .map((e) =>
-                        DrPurpleNotificationListItemDesign(notificationData: e))
-                    .toList(),
-              ).paddingSymmetric(horizontal: AppPadding.p4.w),
-            );
-          } else {
+            if (_notificationsBloc.notifications.isNotEmpty) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: _notificationsBloc.notifications
+                      .map((e) => DrPurpleNotificationListItemDesign(
+                          notificationData: e))
+                      .toList(),
+                ).paddingSymmetric(horizontal: AppPadding.p4.w),
+              );
+            } else {
+              return _emptyNotifications(context);
+            }
+          } else if (state is NotificationsLoading) {
             return ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: 6,
@@ -127,9 +131,41 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 );
               },
             ).paddingAll(AppPadding.p18.sp);
+          } else {
+            return _emptyNotifications(context);
           }
         },
       ).expand();
+
+  Widget _emptyNotifications(BuildContext context) => SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: Container(
+                width: 100.w,
+                alignment: Alignment.center,
+                margin: const EdgeInsets.symmetric(
+                    vertical: AppPadding.p16, horizontal: AppPadding.p16),
+                padding: const EdgeInsets.all(AppPadding.p12),
+                decoration: boxDecorationWithRoundedCorners(
+                  borderRadius: radius(AppSize.s12),
+                  border: Border.all(color: ColorManager.primary),
+                  backgroundColor: context.cardColor,
+                ),
+                child: Text(
+                  AppStrings.emptyNotifications.tr(),
+                  style: getBoldTextStyle(
+                    color: ColorManager.textPrimaryColor,
+                    fontSize: FontSize.s16,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 
   Widget _notificationsAppBar(BuildContext context) => Row(
         mainAxisAlignment: MainAxisAlignment.center,

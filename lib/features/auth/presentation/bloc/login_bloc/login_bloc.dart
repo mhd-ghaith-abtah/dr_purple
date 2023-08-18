@@ -40,7 +40,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       var res = await _loginUseCase.call(
         LoginParams(
           body: LoginParamsBody(
-            userName: "+963${_loginObject.userName}",
+            userName: _loginObject.userName,
             password: _loginObject.password,
           ),
         ),

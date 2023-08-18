@@ -155,5 +155,6 @@
   "appointments_empty": "لا يوجد لديك مواعيد بعد",
   "our_services": "خدماتنا",
   "appointment_day": "يوم الموعد",
-  "appointment_day_remind": "لا تنسى موعدك اليوم عند الساعة {}"
+  "appointment_day_remind": "لا تنسى موعدك اليوم عند الساعة {}",
+  "empty_notifications": "لا يوجد لديك إشعارات بعد"
 }

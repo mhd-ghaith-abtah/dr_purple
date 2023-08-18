@@ -110,11 +110,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () =>
                 context.push("${Routes.settingsRoute}/${Routes.languageRoute}"),
           ),
-          DrPurpleListItemDesign(
-            icon: Icons.account_circle_outlined,
-            title: AppStrings.profile.tr(),
-            onTap: () {},
-          ),
+          // DrPurpleListItemDesign(
+          //   icon: Icons.account_circle_outlined,
+          //   title: AppStrings.profile.tr(),
+          //   onTap: () {},
+          // ),
           DrPurpleListItemDesign(
             icon: Icons.password_outlined,
             title: AppStrings.changePassword.tr(),
@@ -137,23 +137,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
               swapColors: true,
             ).show(),
           ),
-          DrPurpleListItemDesign(
-            icon: CupertinoIcons.delete_simple,
-            iconColor: ColorManager.red,
-            textColor: ColorManager.red,
-            showAnotherPageIcon: false,
-            title: AppStrings.deleteAccount.tr(),
-            onTap: () async => await Utils.dialog(
-              context: context,
-              dialogType: DialogType.warning,
-              okButtonTitle: AppStrings.delete.tr(),
-              dialogTitle: AppStrings.deleteAccount.tr(),
-              dialogDesc: AppStrings.deleteAccountDesc.tr(),
-              onPressCancel: () {},
-              onPressOk: () {},
-              swapColors: true,
-            ).show(),
-          ),
+          // DrPurpleListItemDesign(
+          //   icon: CupertinoIcons.delete_simple,
+          //   iconColor: ColorManager.red,
+          //   textColor: ColorManager.red,
+          //   showAnotherPageIcon: false,
+          //   title: AppStrings.deleteAccount.tr(),
+          //   onTap: () async => await Utils.dialog(
+          //     context: context,
+          //     dialogType: DialogType.warning,
+          //     okButtonTitle: AppStrings.delete.tr(),
+          //     dialogTitle: AppStrings.deleteAccount.tr(),
+          //     dialogDesc: AppStrings.deleteAccountDesc.tr(),
+          //     onPressCancel: () {},
+          //     onPressOk: () {},
+          //     swapColors: true,
+          //   ).show(),
+          // ),
         ],
       );
 

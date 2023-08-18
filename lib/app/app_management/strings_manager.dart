@@ -42,6 +42,7 @@ class AppStrings {
       "media_uploading_canceled_notification";
   static const mediaUploadingInProgressNotification =
       "media_uploading_in_progress_notification";
+  static const emptyNotifications = "empty_notifications";
 
   /// language screen
   static const englishLanguage = "English";

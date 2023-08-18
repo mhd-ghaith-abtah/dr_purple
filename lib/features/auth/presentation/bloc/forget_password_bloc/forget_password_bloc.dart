@@ -28,7 +28,7 @@ class ForgetPasswordBloc
       String errorMessage = Constants.empty;
       var res = await _forgetPasswordUseCase.call(
         ForgetPasswordParams(
-            body: ForgetPasswordParamsBody(mobileNumber: "+963$_phoneNumber")),
+            body: ForgetPasswordParamsBody(mobileNumber: _phoneNumber)),
       );
       bool isError = res.fold((l) {
         errorMessage = l.message;
